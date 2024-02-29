@@ -34,3 +34,4 @@ writeFile("./temporary/fileB.txt", "This is line 1", (err, result) => {
     }
   );
 });
+console.log("At end");
