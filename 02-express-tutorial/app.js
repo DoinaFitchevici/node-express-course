@@ -60,6 +60,15 @@ app.all("*", (req, res) => {
   res.status(404).send("Page not found");
 });
 
+// Define logger middleware function
+const logger = (req, res, next) => {
+  const method = req.method;
+  const url = req.url;
+  const date = new Date().getFullYear();
+  console.log(method, url, date);
+  next();
+};
+
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
 });
