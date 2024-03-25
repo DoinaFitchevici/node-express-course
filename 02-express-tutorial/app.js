@@ -1,17 +1,20 @@
 const express = require("express");
-const cookieParser = require("cookie-parser");
 const { products, people } = require("./data");
+const cookieParser = require("cookie-parser");
+const peopleRouter = require("./routes/people");
 
 const app = express();
 
 console.log("Express Tutorial");
 
+// Middleware to serve static files
 app.use(express.static("./public"));
+
 //Middleware to parse request bodies
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-//Parse cookies
+//Middleware to parse cookies
 app.use(cookieParser());
 
 // Middleware for authentication
@@ -22,6 +25,15 @@ const auth = (req, res, next) => {
   } else {
     res.status(401).json({ message: "unauthorized" });
   }
+};
+
+// Logger middleware function
+const logger = (req, res, next) => {
+  const method = req.method;
+  const url = req.url;
+  const time = new Date().getFullYear();
+  console.log(method, url, time);
+  next();
 };
 
 // Route to handle login
@@ -95,22 +107,12 @@ app.get("/api/v1/query", (req, res) => {
   return res.status(200).json(sortedProducts);
 });
 
-const peopleRouter = require("./routes/people");
-
 app.use("/api/v1/people", peopleRouter);
 
+// Default route
 app.all("*", (req, res) => {
   res.status(404).send("Page not found");
 });
-
-// Define logger middleware function
-const logger = (req, res, next) => {
-  const method = req.method;
-  const url = req.url;
-  const time = new Date().getFullYear();
-  console.log(method, url, time);
-  next();
-};
 
 app.get("/", logger, (req, res) => {
   res.send("Home");
